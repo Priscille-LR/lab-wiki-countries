@@ -1,9 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
+import axios from 'axios';
 import countriesData from '../countries.json';
+
 
 function CountryDetails() {
   const [foundCountry, setFoundCountry] = useState(null);
@@ -11,12 +12,16 @@ function CountryDetails() {
   const { countryId } = useParams();
 
   useEffect(() => {
-    const country = countriesData.find((countryEl) => countryEl.alpha3Code === countryId);
-    console.log(country);
+    const url = `https://ih-countries-api.herokuapp.com/countries/${countryId}`
 
-    if (country) {
-      setFoundCountry(country);
+    const getCountry = async () => {
+      const response = await axios.get(url)
+      setFoundCountry(response.data);
     }
+
+    getCountry()
+    .catch(console.error)
+
   }, [countryId]);
 
   return (
